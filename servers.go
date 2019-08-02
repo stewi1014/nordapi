@@ -1,10 +1,16 @@
 package nordapi
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"sort"
+
+	"github.com/golang/geo/s2"
+)
+
+// ServerInfo contains a list of NordVPN servers with helper methods for searching them.
+type ServerInfo []Server
 
 // Servers fetches a complete server list from NordVPN
-// This is a large list, and shouldn't be called more than once.
-// I reccomend using MarshalJSON and UnmarshalJSON for caching.
 func Servers() (ServerInfo, error) {
 	resp, err := client.Get("https://api.nordvpn.com/server")
 	if err != nil {
@@ -17,45 +23,57 @@ func Servers() (ServerInfo, error) {
 	return si, err
 }
 
-// ServerInfo contains a list of NordVPN servers with helper methods for searching them.
-type ServerInfo []Server
+// Country returns the servers in a given country by it's name; e.g. "United Kingdom", "Germany" etc...
+func (si ServerInfo) Country(name string) ServerInfo {
+	var nsi ServerInfo
+	for i := range si {
+		if si[i].Country == name {
+			nsi = append(nsi, si[i])
+		}
+	}
+	return nsi
+}
 
-// Server is a NordVPN server
-type Server struct {
-	ID             int      `json:"id"`
-	IPAddress      string   `json:"ip_address"`
-	SearchKeywords []string `json:"search_keywords"`
-	Categories     []struct {
-		Name string `json:"name"`
-	} `json:"categories"`
-	Name     string `json:"name"`
-	Domain   string `json:"domain"`
-	Price    int    `json:"price"`
-	Flag     string `json:"flag"`
-	Country  string `json:"country"`
-	Location struct {
-		Lat  float64 `json:"lat"`
-		Long float64 `json:"long"`
-	} `json:"location"`
-	Load     int `json:"load"`
-	Features struct {
-		Ikev2              bool `json:"ikev2"`
-		OpenvpnUDP         bool `json:"openvpn_udp"`
-		OpenvpnTCP         bool `json:"openvpn_tcp"`
-		Socks              bool `json:"socks"`
-		Proxy              bool `json:"proxy"`
-		Pptp               bool `json:"pptp"`
-		L2Tp               bool `json:"l2tp"`
-		OpenvpnXorUDP      bool `json:"openvpn_xor_udp"`
-		OpenvpnXorTCP      bool `json:"openvpn_xor_tcp"`
-		ProxyCybersec      bool `json:"proxy_cybersec"`
-		ProxySsl           bool `json:"proxy_ssl"`
-		ProxySslCybersec   bool `json:"proxy_ssl_cybersec"`
-		Ikev2V6            bool `json:"ikev2_v6"`
-		OpenvpnUDPV6       bool `json:"openvpn_udp_v6"`
-		OpenvpnTCPV6       bool `json:"openvpn_tcp_v6"`
-		WireguardUDP       bool `json:"wireguard_udp"`
-		OpenvpnUDPTLSCrypt bool `json:"openvpn_udp_tls_crypt"`
-		OpenvpnTCPTLSCrypt bool `json:"openvpn_tcp_tls_crypt"`
-	} `json:"features"`
+// CountryCode returns the servers in a given country; e.g. "UK", "DE" etc...
+func (si ServerInfo) CountryCode(code string) ServerInfo {
+	var nsi ServerInfo
+	for i := range si {
+		if si[i].Flag == code {
+			nsi = append(nsi, si[i])
+		}
+	}
+	return nsi
+}
+
+// Features returns the servers supporting the specified features.
+func (si ServerInfo) Features(features Features) ServerInfo {
+	var nsi ServerInfo
+	for i := range si {
+		if si[i].Features.HasFeatures(features) {
+			nsi = append(nsi, si[i])
+		}
+	}
+	return nsi
+}
+
+// SortByLoad sorts the server list from least-loaded to most-loaded
+func (si ServerInfo) SortByLoad() ServerInfo {
+	sort.Slice(si, func(i, j int) bool {
+		return si[i].Load < si[j].Load
+	})
+	return si
+}
+
+// SortByDistance sorts the server list by distance to the given coordinate
+func (si ServerInfo) SortByDistance(position s2.LatLng) ServerInfo {
+	distances := make([]float64, len(si))
+	for i := range si {
+		distances[i] = si[i].LatLng().Distance(position).Degrees()
+	}
+
+	sort.Slice(si, func(i, j int) bool {
+		return distances[i] < distances[j]
+	})
+
+	return si
 }
