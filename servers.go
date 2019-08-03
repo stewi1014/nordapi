@@ -2,7 +2,9 @@ package nordapi
 
 import (
 	"encoding/json"
+	"fmt"
 	"sort"
+	"sync"
 
 	"github.com/golang/geo/s2"
 )
@@ -49,11 +51,21 @@ func (si ServerInfo) CountryCode(code string) ServerInfo {
 func (si ServerInfo) Features(features Features) ServerInfo {
 	var nsi ServerInfo
 	for i := range si {
-		if si[i].Features.HasFeatures(features) {
+		if si[i].HasFeatures(features) {
 			nsi = append(nsi, si[i])
 		}
 	}
 	return nsi
+}
+
+// Domain returns the server with the given domain
+func (si ServerInfo) Domain(domain string) (Server, error) {
+	for i := range si {
+		if si[i].Domain == domain {
+			return si[i], nil
+		}
+	}
+	return Server{}, fmt.Errorf("Couldn't find server with domain %v", domain)
 }
 
 // SortByLoad sorts the server list from least-loaded to most-loaded
@@ -65,31 +77,51 @@ func (si ServerInfo) SortByLoad() ServerInfo {
 }
 
 // SortByDistance sorts the server list by distance to the given coordinate
+// If you have a Latitude and Longitude in degrees, do SortByDistance(s2.LatLngFromDegrees(Latitude, Longitude))
 func (si ServerInfo) SortByDistance(position s2.LatLng) ServerInfo {
-	ds := newDistanceSorter(si, position)
-	sort.Stable(ds)
-	return si
-}
-
-func newDistanceSorter(si ServerInfo, position s2.LatLng) *distanceSorter {
 	dist := make([]float64, len(si))
 	for i := range si {
 		dist[i] = si[i].LatLng().Distance(position).Degrees()
 	}
-	return &distanceSorter{
-		dist: dist,
-		si:   si,
-	}
+	sort.Stable(paralellSorter{attr: dist, si: si})
+	return si
 }
 
-type distanceSorter struct {
-	dist []float64
+// SortByPing sorts the server list by ping times, pinging each server n times
+// and taking the average. Servers that do not reply are removed from the list.
+func (si ServerInfo) SortByPing(n int) ServerInfo {
+	pings := make([]float64, len(si)) //Negative ping value means we remove later
+	wg := sync.WaitGroup{}
+	wg.Add(len(si))
+	for i := range si {
+		go func(i int) {
+			ping, err := si[i].PingTime(4)
+			if err != nil {
+				pings[i] = -1
+			} else {
+				pings[i] = ping.Seconds()
+			}
+			wg.Done()
+		}(i)
+	}
+	wg.Wait()
+
+	sort.Stable(paralellSorter{attr: pings, si: si})
+	return si
+}
+
+// Instead of recalculating server attributes all the time,
+// I cache them in another slice, and sort it instead, swapping the server list
+// alongside it. If the Sort function is even better than I think it is, this might just be a waste of a
+// few KB of memory. If so, sue me (or submit a pull request).
+type paralellSorter struct {
+	attr []float64
 	si   ServerInfo
 }
 
-func (d distanceSorter) Len() int           { return len(d.dist) }
-func (d distanceSorter) Less(i, j int) bool { return d.dist[i] < d.dist[j] }
-func (d distanceSorter) Swap(i, j int) {
-	d.dist[i], d.dist[j] = d.dist[j], d.dist[i]
+func (d paralellSorter) Len() int           { return len(d.attr) }
+func (d paralellSorter) Less(i, j int) bool { return d.attr[i] < d.attr[j] }
+func (d paralellSorter) Swap(i, j int) {
+	d.attr[i], d.attr[j] = d.attr[j], d.attr[i]
 	d.si[i], d.si[j] = d.si[j], d.si[i]
 }

@@ -22,8 +22,7 @@ type Features struct {
 	OpenvpnTCPTLSCrypt bool `json:"openvpn_tcp_tls_crypt"`
 }
 
-// HasFeatures returns true if the feature set supports the given feature set.
-// It simply checks if all features in check are true in f
+// HasFeatures returns true if the calling feature set supports the passed feature set.
 func (f Features) HasFeatures(check Features) bool {
 	if check.Ikev2 && !f.Ikev2 {
 		return false
