@@ -58,7 +58,7 @@ func (si ServerInfo) Features(features Features) ServerInfo {
 
 // SortByLoad sorts the server list from least-loaded to most-loaded
 func (si ServerInfo) SortByLoad() ServerInfo {
-	sort.Slice(si, func(i, j int) bool {
+	sort.SliceStable(si, func(i, j int) bool {
 		return si[i].Load < si[j].Load
 	})
 	return si
@@ -66,14 +66,31 @@ func (si ServerInfo) SortByLoad() ServerInfo {
 
 // SortByDistance sorts the server list by distance to the given coordinate
 func (si ServerInfo) SortByDistance(position s2.LatLng) ServerInfo {
-	distances := make([]float64, len(si))
+	ds := newDistanceSorter(si, position)
+	sort.Stable(ds)
+	return ds.Get()
+}
+
+func newDistanceSorter(si ServerInfo, position s2.LatLng) *distanceSorter {
+	dist := make([]float64, len(si))
 	for i := range si {
-		distances[i] = si[i].LatLng().Distance(position).Degrees()
+		dist[i] = si[i].LatLng().Distance(position).Degrees()
 	}
+	return &distanceSorter{
+		dist: dist,
+		si:   si,
+	}
+}
 
-	sort.Slice(si, func(i, j int) bool {
-		return distances[i] < distances[j]
-	})
+type distanceSorter struct {
+	dist []float64
+	si   ServerInfo
+}
 
-	return si
+func (d distanceSorter) Len() int           { return len(d.dist) }
+func (d distanceSorter) Less(i, j int) bool { return d.dist[i] > d.dist[j] }
+func (d distanceSorter) Get() ServerInfo    { return d.si }
+func (d distanceSorter) Swap(i, j int) {
+	d.dist[i], d.dist[j] = d.dist[j], d.dist[i]
+	d.si[i], d.si[j] = d.si[j], d.si[i]
 }
