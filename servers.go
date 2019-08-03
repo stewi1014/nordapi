@@ -68,7 +68,7 @@ func (si ServerInfo) SortByLoad() ServerInfo {
 func (si ServerInfo) SortByDistance(position s2.LatLng) ServerInfo {
 	ds := newDistanceSorter(si, position)
 	sort.Stable(ds)
-	return ds.Get()
+	return si
 }
 
 func newDistanceSorter(si ServerInfo, position s2.LatLng) *distanceSorter {
@@ -88,8 +88,7 @@ type distanceSorter struct {
 }
 
 func (d distanceSorter) Len() int           { return len(d.dist) }
-func (d distanceSorter) Less(i, j int) bool { return d.dist[i] > d.dist[j] }
-func (d distanceSorter) Get() ServerInfo    { return d.si }
+func (d distanceSorter) Less(i, j int) bool { return d.dist[i] < d.dist[j] }
 func (d distanceSorter) Swap(i, j int) {
 	d.dist[i], d.dist[j] = d.dist[j], d.dist[i]
 	d.si[i], d.si[j] = d.si[j], d.si[i]
