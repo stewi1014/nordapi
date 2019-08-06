@@ -2,6 +2,7 @@
 A simple api for NordVPN
 
 NordAPI tries to use the unfortunately undocumented NordVPN public api for searching NordVPN servers.
+
 [![GoDoc](https://godoc.org/github.com/stewi1014/nordapi?status.svg)](https://godoc.org/github.com/stewi1014/nordapi)
 
 Examples:
