@@ -5,24 +5,24 @@ type Technology int
 
 // NordVPN server feature IDs
 const (
-	FeatIkev2              Technology = 1  // Ikev2/IPSec
-	FeatOpenvpnUDP         Technology = 3  // OpenVPN UDP
-	FeatOpenvpnTCP         Technology = 5  // OpenVPN TCP
-	FeatSocks              Technology = 7  // Socks 5 proxy
-	FeatProxy              Technology = 9  // HTTP Proxy
-	FeatPptp               Technology = 11 // Pptp
-	FeatL2Tp               Technology = 13 // L2TP/IPSec
-	FeatOpenvpnXorUDP      Technology = 15 // OpenVPN UDP Obfuscated
-	FeatOpenvpnXorTCP      Technology = 17 // OpenVPN TCP Obfuscated
-	FeatProxyCybersec      Technology = 19 // HTTP CyberSec Proxy
-	FeatProxySsl           Technology = 21 // HTTP Proxy (SSL)
-	FeatProxySslCybersec   Technology = 23 // HTTP CyberSec Proxy (SSL)
-	FeatIkev2V6            Technology = 26 // IKEv2/IPSec IPv6
-	FeatOpenvpnUDPV6       Technology = 29 // OpenVPN UDP IPv6
-	FeatOpenvpnTCPV6       Technology = 32 // OpenVPN TCP IPv6
-	FeatWireguardUDP       Technology = 35 // Wireguard
-	FeatOpenvpnUDPTLSCrypt Technology = 38 // OpenVPN UDP TLS Crypt
-	FeatOpenvpnTCPTLSCrypt Technology = 41 // OpenVPN TCP TLS Crypt
+	TechIkev2              Technology = 1  // Ikev2/IPSec
+	TechOpenvpnUDP         Technology = 3  // OpenVPN UDP
+	TechOpenvpnTCP         Technology = 5  // OpenVPN TCP
+	TechSocks              Technology = 7  // Socks 5 proxy
+	TechProxy              Technology = 9  // HTTP Proxy
+	TechPptp               Technology = 11 // Pptp
+	TechL2Tp               Technology = 13 // L2TP/IPSec
+	TechOpenvpnXorUDP      Technology = 15 // OpenVPN UDP Obfuscated
+	TechOpenvpnXorTCP      Technology = 17 // OpenVPN TCP Obfuscated
+	TechProxyCybersec      Technology = 19 // HTTP CyberSec Proxy
+	TechProxySsl           Technology = 21 // HTTP Proxy (SSL)
+	TechProxySslCybersec   Technology = 23 // HTTP CyberSec Proxy (SSL)
+	TechIkev2V6            Technology = 26 // IKEv2/IPSec IPv6
+	TechOpenvpnUDPV6       Technology = 29 // OpenVPN UDP IPv6
+	TechOpenvpnTCPV6       Technology = 32 // OpenVPN TCP IPv6
+	TechWireguardUDP       Technology = 35 // Wireguard
+	TechOpenvpnUDPTLSCrypt Technology = 38 // OpenVPN UDP TLS Crypt
+	TechOpenvpnTCPTLSCrypt Technology = 41 // OpenVPN TCP TLS Crypt
 )
 
 var featureIdentifiers = map[Technology]string{
