@@ -1,61 +1,105 @@
 package nordapi
 
-import (
-	"errors"
-	"time"
+import "io"
 
-	"github.com/golang/geo/s2"
-	ping "github.com/sparrc/go-ping"
-)
-
-// Server is a NordVPN server
+// Server is a NordVPN server.
 type Server struct {
-	ID             int      `json:"id"`
-	IPAddress      string   `json:"ip_address"`
-	SearchKeywords []string `json:"search_keywords"`
-	Categories     []struct {
-		Name string `json:"name"`
-	} `json:"categories"`
-	Name     string `json:"name"`
-	Domain   string `json:"domain"`
-	Price    int    `json:"price"`
-	Flag     string `json:"flag"`
-	Country  string `json:"country"`
-	Location struct {
-		Lat  float64 `json:"lat"`
-		Long float64 `json:"long"`
-	} `json:"location"`
-	Load     int      `json:"load"`
-	Features Features `json:"features"`
+	ID        int    `json:"id"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+	Name      string `json:"name"`
+	Station   string `json:"station"`
+	Hostname  string `json:"hostname"`
+	Load      int    `json:"load"`
+	Status    string `json:"status"`
+	Locations []struct {
+		ID        int     `json:"id"`
+		CreatedAt string  `json:"created_at"`
+		UpdatedAt string  `json:"updated_at"`
+		Latitude  float64 `json:"latitude"`
+		Longitude float64 `json:"longitude"`
+		Country   Country `json:"country"`
+	} `json:"locations"`
+	Services []struct {
+		ID         int    `json:"id"`
+		Name       string `json:"name"`
+		Identifier string `json:"identifier"`
+		CreatedAt  string `json:"created_at"`
+		UpdatedAt  string `json:"updated_at"`
+	} `json:"services"`
+	Technologies []struct {
+		ID         int    `json:"id"`
+		Name       string `json:"name"`
+		Identifier string `json:"identifier"`
+		CreatedAt  string `json:"created_at"`
+		UpdatedAt  string `json:"updated_at"`
+		Pivot      struct {
+			TechnologyID int    `json:"technology_id"`
+			ServerID     int    `json:"server_id"`
+			Status       string `json:"status"`
+		} `json:"pivot"`
+	} `json:"technologies"`
+	Groups []struct {
+		ID        int    `json:"id"`
+		CreatedAt string `json:"created_at"`
+		UpdatedAt string `json:"updated_at"`
+		Title     string `json:"title"`
+		Type      struct {
+			ID         int    `json:"id"`
+			CreatedAt  string `json:"created_at"`
+			UpdatedAt  string `json:"updated_at"`
+			Title      string `json:"title"`
+			Identifier string `json:"identifier"`
+		} `json:"type"`
+	} `json:"groups"`
+	Specifications []struct {
+		ID         int    `json:"id"`
+		Title      string `json:"title"`
+		Identifier string `json:"identifier"`
+		Values     []struct {
+			ID    int    `json:"id"`
+			Value string `json:"value"`
+		} `json:"values"`
+	} `json:"specifications"`
+	Ips []struct {
+		ID        int    `json:"id"`
+		CreatedAt string `json:"created_at"`
+		UpdatedAt string `json:"updated_at"`
+		ServerID  int    `json:"server_id"`
+		IPID      int    `json:"ip_id"`
+		Type      string `json:"type"`
+		IP        struct {
+			ID      int    `json:"id"`
+			IP      string `json:"ip"`
+			Version int    `json:"version"`
+		} `json:"ip"`
+	} `json:"ips"`
 }
 
-// LatLng returns the servers location (in Server.Location) as a s2.LatLng type.
-func (s Server) LatLng() s2.LatLng {
-	return s2.LatLngFromDegrees(s.Location.Lat, s.Location.Long)
-}
+// OpenvpnUDPConfig returns the UDP port 1194 OpenVPN configuration for the server.
+func (s Server) OpenvpnUDPConfig() (io.ReadCloser, error) {
+	resp, err := client.Get(
+		"https://downloads.nordcdn.com/configs/files/ovpn_legacy/servers/" +
+			s.Hostname +
+			".udp1194.ovpn")
 
-// HasFeatures returns true if the server supports the passed features.
-func (s Server) HasFeatures(features Features) bool {
-	return s.Features.HasFeatures(features)
-}
-
-// ErrNoResponce is returned when no ping reply is received
-var ErrNoResponce = errors.New("No ping reply was received")
-
-// PingTime pings the server, calculating the average time from n pings.
-func (s Server) PingTime(n int) (time.Duration, error) {
-	pinger, err := ping.NewPinger(s.IPAddress)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	pinger.Count = n
-	pinger.Timeout = time.Duration(n) * time.Second * 5
-	pinger.Run()
-	stats := pinger.Statistics()
-	if stats.PacketsRecv == 0 {
-		return 0, ErrNoResponce
+	return resp.Body, err
+}
+
+// OpenvpnTCPConfig returns the TCP port 443 OpenVPN configuration for the server.
+func (s Server) OpenvpnTCPConfig() (io.ReadCloser, error) {
+	resp, err := client.Get(
+		"https://downloads.nordcdn.com/configs/files/ovpn_legacy/servers/" +
+			s.Hostname +
+			".tcp443.ovpn")
+
+	if err != nil {
+		return nil, err
 	}
 
-	return stats.AvgRtt, nil
+	return resp.Body, err
 }
