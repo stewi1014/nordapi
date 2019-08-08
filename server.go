@@ -76,6 +76,15 @@ type Server struct {
 	} `json:"ips"`
 }
 
+// Hostname returns the server with the given hostname.
+func Hostname(hostname string) (Server, error) {
+	servers, err := Servers()
+	if err != nil {
+		return Server{}, err
+	}
+	return servers.Hostname(hostname)
+}
+
 // OpenvpnUDPConfig returns the UDP port 1194 OpenVPN configuration for the server.
 func (s Server) OpenvpnUDPConfig() (io.ReadCloser, error) {
 	resp, err := client.Get(
@@ -102,4 +111,24 @@ func (s Server) OpenvpnTCPConfig() (io.ReadCloser, error) {
 	}
 
 	return resp.Body, err
+}
+
+// InGroup returns true if the server is in the given group
+func (s Server) InGroup(group Group) bool {
+	for i := range s.Groups {
+		if Group(s.Groups[i].ID) == group {
+			return true
+		}
+	}
+	return false
+}
+
+// HasTechnology returns true if the server has the given technology
+func (s Server) HasTechnology(technology Technology) bool {
+	for i := range s.Technologies {
+		if Technology(s.Technologies[i].ID) == technology {
+			return true
+		}
+	}
+	return false
 }

@@ -40,3 +40,8 @@ var groupIdentifiers = map[Group]string{
 func (g Group) GetFilter() string {
 	return "filters[servers_groups][identifier]=" + groupIdentifiers[g]
 }
+
+// Satisfies implements Filter
+func (g Group) Satisfies(s Server) bool {
+	return s.InGroup(g)
+}

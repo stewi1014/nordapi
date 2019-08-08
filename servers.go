@@ -5,6 +5,7 @@ import (
 	"strconv"
 )
 
+// ErrServerNotFound is returned if the server cannot be found.
 var ErrServerNotFound = errors.New("Server not found")
 
 // ServerList is a list of NordVPN servers

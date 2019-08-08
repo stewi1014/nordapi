@@ -34,6 +34,11 @@ func (c Country) GetFilter() string {
 	return "filters[country_id]=" + strconv.Itoa(c.ID)
 }
 
+// Satisfies implements Filter
+func (c Country) Satisfies(s Server) bool {
+	return c.ID == s.Locations[0].Country.ID
+}
+
 // CountryList is a list of countries.
 type CountryList []Country
 

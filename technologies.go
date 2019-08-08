@@ -47,6 +47,11 @@ var featureIdentifiers = map[Technology]string{
 }
 
 // GetFilter implements Filter
-func (f Technology) GetFilter() string {
-	return "filters[servers_technologies][identifier]=" + featureIdentifiers[f]
+func (t Technology) GetFilter() string {
+	return "filters[servers_technologies][identifier]=" + featureIdentifiers[t]
+}
+
+// Satisfies implements Filter
+func (t Technology) Satisfies(s Server) bool {
+	return s.HasTechnology(t)
 }

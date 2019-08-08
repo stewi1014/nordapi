@@ -5,6 +5,9 @@ type Filter interface {
 	// GetFilter returns the filter. When applying filters, they're added to the url as follows;
 	// <url>?<filter1>&<filter2>
 	GetFilter() string
+
+	// Satisfies returns true if the given server satisfies the filter.
+	Satisfies(Server) bool
 }
 
 // FilterList is a list of filters.
@@ -19,4 +22,14 @@ func (f FilterList) GetFilter() (out string) {
 		out += f[i].GetFilter()
 	}
 	return
+}
+
+// Satisfies implements Filter
+func (f FilterList) Satisfies(s Server) bool {
+	for i := range f {
+		if !f[i].Satisfies(s) {
+			return false
+		}
+	}
+	return true
 }
