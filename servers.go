@@ -1,8 +1,11 @@
 package nordapi
 
 import (
+	"errors"
 	"strconv"
 )
+
+var ErrServerNotFound = errors.New("Server not found")
 
 // ServerList is a list of NordVPN servers
 type ServerList []Server
@@ -26,4 +29,14 @@ func Reccomended(n int, filters ...Filter) (ServerList, error) {
 		url += "?limit=" + s
 	}
 	return sl, getAndUnmarshall(url, &sl)
+}
+
+// Hostname returns the server with the given hostname
+func (sl ServerList) Hostname(hostname string) (Server, error) {
+	for i := range sl {
+		if sl[i].Hostname == hostname {
+			return sl[i], nil
+		}
+	}
+	return Server{}, ErrServerNotFound
 }
