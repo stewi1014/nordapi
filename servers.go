@@ -29,7 +29,14 @@ func Reccomended(n int, filters ...Filter) (ServerList, error) {
 	} else {
 		url += "?limit=" + s
 	}
-	return sl, getAndUnmarshall(url, &sl)
+	err := getAndUnmarshall(url, &sl)
+	if err != nil {
+		return nil, err
+	}
+	if len(sl) == 0 {
+		return nil, ErrServerNotFound
+	}
+	return sl, nil
 }
 
 // Hostname returns the server with the given hostname
