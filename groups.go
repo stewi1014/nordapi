@@ -43,5 +43,10 @@ func (g Group) GetFilter() string {
 
 // Satisfies implements Filter
 func (g Group) Satisfies(s Server) bool {
-	return s.InGroup(g)
+	for _, sg := range s.Groups {
+		if sg.ID == g {
+			return true
+		}
+	}
+	return false
 }

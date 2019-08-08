@@ -28,11 +28,11 @@ type Server struct {
 		UpdatedAt  string `json:"updated_at"`
 	} `json:"services"`
 	Technologies []struct {
-		ID         int    `json:"id"`
-		Name       string `json:"name"`
-		Identifier string `json:"identifier"`
-		CreatedAt  string `json:"created_at"`
-		UpdatedAt  string `json:"updated_at"`
+		ID         Technology `json:"id"`
+		Name       string     `json:"name"`
+		Identifier string     `json:"identifier"`
+		CreatedAt  string     `json:"created_at"`
+		UpdatedAt  string     `json:"updated_at"`
 		Pivot      struct {
 			TechnologyID int    `json:"technology_id"`
 			ServerID     int    `json:"server_id"`
@@ -40,7 +40,7 @@ type Server struct {
 		} `json:"pivot"`
 	} `json:"technologies"`
 	Groups []struct {
-		ID        int    `json:"id"`
+		ID        Group  `json:"id"`
 		CreatedAt string `json:"created_at"`
 		UpdatedAt string `json:"updated_at"`
 		Title     string `json:"title"`
@@ -113,22 +113,8 @@ func (s Server) OpenvpnTCPConfig() (io.ReadCloser, error) {
 	return resp.Body, err
 }
 
-// InGroup returns true if the server is in the given group
-func (s Server) InGroup(group Group) bool {
-	for i := range s.Groups {
-		if Group(s.Groups[i].ID) == group {
-			return true
-		}
-	}
-	return false
-}
-
-// HasTechnology returns true if the server has the given technology
-func (s Server) HasTechnology(technology Technology) bool {
-	for i := range s.Technologies {
-		if Technology(s.Technologies[i].ID) == technology {
-			return true
-		}
-	}
-	return false
+// Satisfies returns true if the server satisfies the given filters
+func (s Server) Satisfies(filters ...Filter) bool {
+	fl := FilterList(filters)
+	return fl.Satisfies(s)
 }

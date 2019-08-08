@@ -53,5 +53,10 @@ func (t Technology) GetFilter() string {
 
 // Satisfies implements Filter
 func (t Technology) Satisfies(s Server) bool {
-	return s.HasTechnology(t)
+	for _, st := range s.Technologies {
+		if st.ID == t {
+			return true
+		}
+	}
+	return false
 }
