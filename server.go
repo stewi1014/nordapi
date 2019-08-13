@@ -87,6 +87,10 @@ func Hostname(hostname string) (Server, error) {
 
 // OpenvpnUDPConfig returns the UDP port 1194 OpenVPN configuration for the server.
 func (s Server) OpenvpnUDPConfig() (io.ReadCloser, error) {
+	if s.Hostname == "" {
+		return nil, ErrServerNotFound
+	}
+
 	resp, err := client.Get(
 		"https://downloads.nordcdn.com/configs/files/ovpn_legacy/servers/" +
 			s.Hostname +
@@ -101,6 +105,10 @@ func (s Server) OpenvpnUDPConfig() (io.ReadCloser, error) {
 
 // OpenvpnTCPConfig returns the TCP port 443 OpenVPN configuration for the server.
 func (s Server) OpenvpnTCPConfig() (io.ReadCloser, error) {
+	if s.Hostname == "" {
+		return nil, ErrServerNotFound
+	}
+
 	resp, err := client.Get(
 		"https://downloads.nordcdn.com/configs/files/ovpn_legacy/servers/" +
 			s.Hostname +
