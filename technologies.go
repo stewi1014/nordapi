@@ -48,7 +48,11 @@ var featureIdentifiers = map[Technology]string{
 
 // GetFilter implements Filter
 func (t Technology) GetFilter() string {
-	return "filters[servers_technologies][identifier]=" + featureIdentifiers[t]
+	s, ok := featureIdentifiers[t]
+	if !ok {
+		return ""
+	}
+	return "filters[servers_technologies][identifier]=" + s
 }
 
 // Satisfies implements Filter
@@ -59,4 +63,25 @@ func (t Technology) Satisfies(s *Server) bool {
 		}
 	}
 	return false
+}
+
+// String implements fmt.Stringer
+// It returns the identifier string for the technology
+func (t Technology) String() string {
+	s, ok := featureIdentifiers[t]
+	if !ok {
+		return "unknown_technology"
+	}
+	return s
+}
+
+// TechnologyIdentifier returns the Technology from its identifying string.
+// If it is not found, Technology == 0 will be true.
+func TechnologyIdentifier(identifier string) Technology {
+	for key, ident := range featureIdentifiers {
+		if ident == identifier {
+			return key
+		}
+	}
+	return Technology(0)
 }

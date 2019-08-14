@@ -16,10 +16,14 @@ type FilterList []Filter
 // GetFilter implements Filter.
 func (f FilterList) GetFilter() (out string) {
 	for i := range f {
+		filter := f[i].GetFilter()
+		if filter == "" {
+			continue
+		}
 		if i > 0 {
 			out += "&"
 		}
-		out += f[i].GetFilter()
+		out += filter
 	}
 	return
 }

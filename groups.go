@@ -38,7 +38,11 @@ var groupIdentifiers = map[Group]string{
 
 // GetFilter implements Filter
 func (g Group) GetFilter() string {
-	return "filters[servers_groups][identifier]=" + groupIdentifiers[g]
+	s, ok := groupIdentifiers[g]
+	if !ok {
+		return ""
+	}
+	return "filters[servers_groups][identifier]=" + s
 }
 
 // Satisfies implements Filter
@@ -49,4 +53,25 @@ func (g Group) Satisfies(s *Server) bool {
 		}
 	}
 	return false
+}
+
+// String implements fmt.Stringer
+// It returns the identifier string for the group
+func (g Group) String() string {
+	s, ok := groupIdentifiers[g]
+	if !ok {
+		return "unknown_group"
+	}
+	return s
+}
+
+// GroupIdentifier returns the group from its identifying string.
+// If it is not found, Group == 0 will be true.
+func GroupIdentifier(identifier string) Group {
+	for key, ident := range groupIdentifiers {
+		if ident == identifier {
+			return key
+		}
+	}
+	return Group(0)
 }
