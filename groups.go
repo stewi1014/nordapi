@@ -42,7 +42,7 @@ func (g Group) GetFilter() string {
 }
 
 // Satisfies implements Filter
-func (g Group) Satisfies(s Server) bool {
+func (g Group) Satisfies(s *Server) bool {
 	for _, sg := range s.Groups {
 		if sg.ID == g {
 			return true

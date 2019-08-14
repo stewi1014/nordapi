@@ -37,7 +37,7 @@ func (c *Country) GetFilter() string {
 }
 
 // Satisfies implements Filter
-func (c *Country) Satisfies(s Server) bool {
+func (c *Country) Satisfies(s *Server) bool {
 	return c.ID == s.Locations[0].Country.ID
 }
 

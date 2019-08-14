@@ -52,7 +52,7 @@ func (t Technology) GetFilter() string {
 }
 
 // Satisfies implements Filter
-func (t Technology) Satisfies(s Server) bool {
+func (t Technology) Satisfies(s *Server) bool {
 	for _, st := range s.Technologies {
 		if st.ID == t {
 			return true
