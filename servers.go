@@ -13,14 +13,22 @@ type ServerList []*Server
 
 // Servers returns a complete list of NordVPN servers.
 func Servers() (ServerList, error) {
-	var sl ServerList
-	return sl, getAndUnmarshall("https://api.nordvpn.com/v1/servers?limit=16384", &sl)
+	var servers []Server
+	err := getAndUnmarshall("https://api.nordvpn.com/v1/servers?limit=16384", &servers)
+	if err != nil {
+		return nil, err
+	}
+	sl := make(ServerList, len(servers))
+	for i := range servers {
+		sl[i] = &servers[i]
+	}
+	return sl, nil
 }
 
 // Reccomended returns the top n recomended servers, filtered by filters.
 func Reccomended(n int, filters ...Filter) (ServerList, error) {
 	s := strconv.Itoa(n)
-	var sl ServerList
+	var servers []Server
 	fl := FilterList(filters)
 	f := fl.GetFilter()
 	url := "https://api.nordvpn.com/v1/servers/recommendations"
@@ -29,12 +37,16 @@ func Reccomended(n int, filters ...Filter) (ServerList, error) {
 	} else {
 		url += "?limit=" + s
 	}
-	err := getAndUnmarshall(url, &sl)
+	err := getAndUnmarshall(url, &servers)
 	if err != nil {
 		return nil, err
 	}
-	if len(sl) == 0 {
+	if len(servers) == 0 {
 		return nil, ErrServerNotFound
+	}
+	sl := make(ServerList, len(servers))
+	for i := range servers {
+		sl[i] = &servers[i]
 	}
 	return sl, nil
 }

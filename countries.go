@@ -104,11 +104,16 @@ func Countries() (CountryList, error) {
 		return nil, err
 	}
 
-	var countries CountryList
+	var countries []Country
 	dec := json.NewDecoder(resp.Body)
 	err = dec.Decode(&countries)
 
-	return countries, err
+	cl := make(CountryList, len(countries))
+	for i := range countries {
+		cl[i] = &countries[i]
+	}
+
+	return cl, err
 }
 
 // Name returns the country with the given name.
