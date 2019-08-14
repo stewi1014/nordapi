@@ -1,6 +1,7 @@
 package nordapi
 
 import (
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"strconv"
@@ -22,6 +23,7 @@ type City struct {
 }
 
 // Country is a country in which NordVPN has server(s).
+// A Country with only an ID set is valid.
 type Country struct {
 	ID     int    `json:"id"`
 	Name   string `json:"name"`
@@ -37,6 +39,59 @@ func (c Country) GetFilter() string {
 // Satisfies implements Filter
 func (c Country) Satisfies(s Server) bool {
 	return c.ID == s.Locations[0].Country.ID
+}
+
+// MarshalBinary implements encoding.BinaryMarshaler
+func (c *Country) MarshalBinary() ([]byte, error) {
+	buff := make([]byte, binary.MaxVarintLen64)
+	binary.PutVarint(buff, int64(c.ID))
+	return buff, nil
+}
+
+// UnmarshalBinary implements encoding.BinaryUnmarshaler
+func (c *Country) UnmarshalBinary(data []byte) error {
+	id, _ := binary.Varint(data)
+	c.ID = int(id)
+	return nil
+}
+
+// MarshalText implements encoding.TextMarshaler
+// It stores the name and id in the format Name_ID
+func (c *Country) MarshalText() ([]byte, error) {
+	id := strconv.Itoa(c.ID)
+	return []byte(c.Name + "_" + id), nil
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler
+func (c *Country) UnmarshalText(text []byte) error {
+	elems := strings.Split(string(text), "_")
+	if len(elems) != 2 {
+		return errors.New("invalid country format")
+	}
+	id, err := strconv.Atoi(elems[1])
+	if err != nil {
+		return err
+	}
+	c.Name = elems[0]
+	c.ID = id
+	return nil
+}
+
+// Populate populates the Country's feilds from the API using only its ID.
+// This is useful, for example, after Unmarshaling
+func (c *Country) Populate() error {
+	countries, err := Countries()
+	if err != nil {
+		return err
+	}
+
+	for i := range countries {
+		if countries[i].ID == c.ID {
+			*c = countries[i]
+			return nil
+		}
+	}
+	return ErrCountryNotFound
 }
 
 // CountryList is a list of countries.

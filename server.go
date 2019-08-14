@@ -1,6 +1,9 @@
 package nordapi
 
-import "io"
+import (
+	"encoding/binary"
+	"io"
+)
 
 // Server is a NordVPN server.
 type Server struct {
@@ -74,6 +77,51 @@ type Server struct {
 			Version int    `json:"version"`
 		} `json:"ip"`
 	} `json:"ips"`
+}
+
+// MarshalBinary implements encoding.BinaryMarshaler
+func (s *Server) MarshalBinary() ([]byte, error) {
+	buff := make([]byte, binary.MaxVarintLen64)
+	binary.PutVarint(buff, int64(s.ID))
+	return buff, nil
+}
+
+// UnmarshalBinary implements encoding.BinaryUnmarshaler
+func (s *Server) UnmarshalBinary(data []byte) error {
+	id, _ := binary.Varint(data)
+	s.ID = int(id)
+	return nil
+}
+
+// MarshalText implements encoding.TextMarshaler
+func (s *Server) MarshalText() ([]byte, error) {
+	return []byte(s.Hostname), nil
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler
+func (s *Server) UnmarshalText(text []byte) error {
+	s.Hostname = string(text)
+	return nil
+}
+
+// Populate populates the Server's feilds from the API using its ID or Hostname, preferring ID.
+func (s *Server) Populate() error {
+	servers, err := Servers()
+	if err != nil {
+		return err
+	}
+
+	for _, server := range servers {
+		if server.ID == s.ID {
+			*s = server
+			return nil
+		}
+		if server.Hostname == s.Hostname {
+			*s = server
+			return nil
+		}
+	}
+	return ErrServerNotFound
 }
 
 // Hostname returns the server with the given hostname.
