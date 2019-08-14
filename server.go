@@ -113,11 +113,11 @@ func (s *Server) Populate() error {
 
 	for _, server := range servers {
 		if server.ID == s.ID {
-			*s = server
+			*s = *server
 			return nil
 		}
 		if server.Hostname == s.Hostname {
-			*s = server
+			*s = *server
 			return nil
 		}
 	}
@@ -125,16 +125,16 @@ func (s *Server) Populate() error {
 }
 
 // Hostname returns the server with the given hostname.
-func Hostname(hostname string) (Server, error) {
+func Hostname(hostname string) (*Server, error) {
 	servers, err := Servers()
 	if err != nil {
-		return Server{}, err
+		return nil, err
 	}
 	return servers.Hostname(hostname)
 }
 
 // OpenvpnUDPConfig returns the UDP port 1194 OpenVPN configuration for the server.
-func (s Server) OpenvpnUDPConfig() (io.ReadCloser, error) {
+func (s *Server) OpenvpnUDPConfig() (io.ReadCloser, error) {
 	if s.Hostname == "" {
 		return nil, ErrServerNotFound
 	}
@@ -152,7 +152,7 @@ func (s Server) OpenvpnUDPConfig() (io.ReadCloser, error) {
 }
 
 // OpenvpnTCPConfig returns the TCP port 443 OpenVPN configuration for the server.
-func (s Server) OpenvpnTCPConfig() (io.ReadCloser, error) {
+func (s *Server) OpenvpnTCPConfig() (io.ReadCloser, error) {
 	if s.Hostname == "" {
 		return nil, ErrServerNotFound
 	}
@@ -170,7 +170,7 @@ func (s Server) OpenvpnTCPConfig() (io.ReadCloser, error) {
 }
 
 // Satisfies returns true if the server satisfies the given filters
-func (s Server) Satisfies(filters ...Filter) bool {
+func (s *Server) Satisfies(filters ...Filter) bool {
 	fl := FilterList(filters)
 	return fl.Satisfies(s)
 }

@@ -7,7 +7,7 @@ type Filter interface {
 	GetFilter() string
 
 	// Satisfies returns true if the given server satisfies the filter.
-	Satisfies(Server) bool
+	Satisfies(*Server) bool
 }
 
 // FilterList is a list of filters.
@@ -25,7 +25,7 @@ func (f FilterList) GetFilter() (out string) {
 }
 
 // Satisfies implements Filter
-func (f FilterList) Satisfies(s Server) bool {
+func (f FilterList) Satisfies(s *Server) bool {
 	for i := range f {
 		if !f[i].Satisfies(s) {
 			return false

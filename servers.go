@@ -9,7 +9,7 @@ import (
 var ErrServerNotFound = errors.New("Server not found")
 
 // ServerList is a list of NordVPN servers
-type ServerList []Server
+type ServerList []*Server
 
 // Servers returns a complete list of NordVPN servers.
 func Servers() (ServerList, error) {
@@ -40,11 +40,11 @@ func Reccomended(n int, filters ...Filter) (ServerList, error) {
 }
 
 // Hostname returns the server with the given hostname
-func (sl ServerList) Hostname(hostname string) (Server, error) {
+func (sl ServerList) Hostname(hostname string) (*Server, error) {
 	for i := range sl {
 		if sl[i].Hostname == hostname {
 			return sl[i], nil
 		}
 	}
-	return Server{}, ErrServerNotFound
+	return nil, ErrServerNotFound
 }
