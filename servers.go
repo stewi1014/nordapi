@@ -28,15 +28,16 @@ func Servers() (ServerList, error) {
 // Reccomended returns the top n recomended servers, filtered by filters.
 func Reccomended(n int, filters ...Filter) (ServerList, error) {
 	s := strconv.Itoa(n)
-	var servers []Server
-	fl := FilterList(filters)
-	f := fl.GetFilter()
+	var servers ServerList
+	f := FilterList(filters).GetFilter()
+
 	url := "https://api.nordvpn.com/v1/servers/recommendations"
-	if len(f) > 0 {
+	if f != "" {
 		url += "?" + f + "&limit=" + s
 	} else {
 		url += "?limit=" + s
 	}
+
 	err := getAndUnmarshall(url, &servers)
 	if err != nil {
 		return nil, err
@@ -44,11 +45,7 @@ func Reccomended(n int, filters ...Filter) (ServerList, error) {
 	if len(servers) == 0 {
 		return nil, ErrServerNotFound
 	}
-	sl := make(ServerList, len(servers))
-	for i := range servers {
-		sl[i] = &servers[i]
-	}
-	return sl, nil
+	return servers, nil
 }
 
 // Hostname returns the server with the given hostname
