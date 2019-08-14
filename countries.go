@@ -29,6 +29,11 @@ func (c CountryID) GetFilter() string {
 	return "filters[country_id]=" + strconv.Itoa(int(c))
 }
 
+// Satisfies implements Filter
+func (c CountryID) Satisfies(s *Server) bool {
+	return c == s.Locations[0].Country.ID
+}
+
 // Country is a country in which NordVPN has server(s).
 // A Country with only an ID set is valid.
 type Country struct {
