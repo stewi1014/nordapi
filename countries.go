@@ -55,7 +55,9 @@ func (c *Country) Satisfies(s *Server) bool {
 
 // String implements fmt.Stringer.
 // It returns the country's name
-func (c *Country) String()
+func (c *Country) String() string {
+	return c.Name
+}
 
 // CountryList is a list of countries.
 type CountryList []*Country
