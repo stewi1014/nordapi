@@ -34,6 +34,10 @@ func (c CountryID) Satisfies(s *Server) bool {
 	return c == s.Locations[0].Country.ID
 }
 
+func (c CountryID) String() string {
+	return "country_id=" + strconv.Itoa(int(c))
+}
+
 // Country is a country in which NordVPN has server(s).
 // A Country with only an ID set is valid.
 type Country struct {
