@@ -19,6 +19,7 @@ func getAndUnmarshall(url string, obj interface{}) error {
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return fmt.Errorf("getting \"%v\"; %v", url, resp.Status)
