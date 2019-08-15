@@ -29,5 +29,5 @@ func getAndUnmarshall(url string, obj interface{}) error {
 	if err != nil {
 		return fmt.Errorf("decoding \"%v\"; %v", url, err)
 	}
-	return dec.Decode(obj)
+	return nil
 }
