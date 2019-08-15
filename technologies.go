@@ -31,23 +31,23 @@ type Technology struct {
 // NordVPN server feature IDs
 var (
 	TechIkev2              = &Technology{ID: 1, Name: "IKEv2/IPSec", Identifier: "ikev2"}                             // Ikev2/IPSec
-	TechOpenvpnUDP         = &Technology{ID: 3, Name: "OpenVPN UDP", Identifier: "openvpn_udp"}                       // OpenVPN UDP
-	TechOpenvpnTCP         = &Technology{ID: 5, Name: "OpenVPN TCP", Identifier: "openvpn_tcp"}                       // OpenVPN TCP
+	TechOpenVPNUDP         = &Technology{ID: 3, Name: "OpenVPN UDP", Identifier: "openvpn_udp"}                       // OpenVPN UDP
+	TechOpenVPNTCP         = &Technology{ID: 5, Name: "OpenVPN TCP", Identifier: "openvpn_tcp"}                       // OpenVPN TCP
 	TechSocks              = &Technology{ID: 7, Name: "Socks 5", Identifier: "socks"}                                 // Socks 5 proxy
 	TechProxy              = &Technology{ID: 9, Name: "HTTP Proxy", Identifier: "proxy"}                              // HTTP Proxy
 	TechPptp               = &Technology{ID: 11, Name: "PPTP", Identifier: "pptp"}                                    // Pptp
 	TechL2Tp               = &Technology{ID: 13, Name: "L2TP/IPSec", Identifier: "l2tp"}                              // L2TP/IPSec
-	TechOpenvpnXorUDP      = &Technology{ID: 15, Name: "OpenVPN UDP Obfuscated", Identifier: "openvpn_xor_udp"}       // OpenVPN UDP Obfuscated
-	TechOpenvpnXorTCP      = &Technology{ID: 17, Name: "OpenVPN TCP Obfuscated", Identifier: "openvpn_xor_tcp"}       // OpenVPN TCP Obfuscated
+	TechOpenVPNXorUDP      = &Technology{ID: 15, Name: "OpenVPN UDP Obfuscated", Identifier: "openvpn_xor_udp"}       // OpenVPN UDP Obfuscated
+	TechOpenVPNXorTCP      = &Technology{ID: 17, Name: "OpenVPN TCP Obfuscated", Identifier: "openvpn_xor_tcp"}       // OpenVPN TCP Obfuscated
 	TechProxyCybersec      = &Technology{ID: 19, Name: "HTTP CyberSec Proxy", Identifier: "proxy_cybersec"}           // HTTP CyberSec Proxy
 	TechProxySsl           = &Technology{ID: 21, Name: "HTTP Proxy (SSL)", Identifier: "proxy_ssl"}                   // HTTP Proxy (SSL)
 	TechProxySslCybersec   = &Technology{ID: 23, Name: "HTTP CyberSec Proxy (SSL)", Identifier: "proxy_ssl_cybersec"} // HTTP CyberSec Proxy (SSL)
 	TechIkev2V6            = &Technology{ID: 26, Name: "IKEv2/IPSec IPv6", Identifier: "ikev2_v6"}                    // IKEv2/IPSec IPv6
-	TechOpenvpnUDPV6       = &Technology{ID: 29, Name: "OpenVPN UDP IPv6", Identifier: "openvpn_udp_v6"}              // OpenVPN UDP IPv6
-	TechOpenvpnTCPV6       = &Technology{ID: 32, Name: "OpenVPN TCP IPv6", Identifier: "openvpn_tcp_v6"}              // OpenVPN TCP IPv6
+	TechOpenVPNUDPV6       = &Technology{ID: 29, Name: "OpenVPN UDP IPv6", Identifier: "openvpn_udp_v6"}              // OpenVPN UDP IPv6
+	TechOpenVPNTCPV6       = &Technology{ID: 32, Name: "OpenVPN TCP IPv6", Identifier: "openvpn_tcp_v6"}              // OpenVPN TCP IPv6
 	TechWireguardUDP       = &Technology{ID: 35, Name: "Wireguard", Identifier: "wireguard_udp"}                      // Wireguard
-	TechOpenvpnUDPTLSCrypt = &Technology{ID: 38, Name: "OpenVPN UDP TLS Crypt", Identifier: "openvpn_udp_tls_crypt"}  // OpenVPN UDP TLS Crypt
-	TechOpenvpnTCPTLSCrypt = &Technology{ID: 41, Name: "OpenVPN TCP TLS Crypt", Identifier: "openvpn_tcp_tls_crypt"}  // OpenVPN TCP TLS Crypt
+	TechOpenVPNUDPTLSCrypt = &Technology{ID: 38, Name: "OpenVPN UDP TLS Crypt", Identifier: "openvpn_udp_tls_crypt"}  // OpenVPN UDP TLS Crypt
+	TechOpenVPNTCPTLSCrypt = &Technology{ID: 41, Name: "OpenVPN TCP TLS Crypt", Identifier: "openvpn_tcp_tls_crypt"}  // OpenVPN TCP TLS Crypt
 )
 
 // Avoid race conditions if two routines acess knownTechnologies
@@ -56,23 +56,23 @@ var knownTechnologiesMutex sync.Mutex
 // Users should lock knownTechnologiesMutex
 var knownTechnologies = []*Technology{
 	TechIkev2,
-	TechOpenvpnUDP,
-	TechOpenvpnTCP,
+	TechOpenVPNUDP,
+	TechOpenVPNTCP,
 	TechSocks,
 	TechProxy,
 	TechPptp,
 	TechL2Tp,
-	TechOpenvpnXorUDP,
-	TechOpenvpnXorTCP,
+	TechOpenVPNXorUDP,
+	TechOpenVPNXorTCP,
 	TechProxyCybersec,
 	TechProxySsl,
 	TechProxySslCybersec,
 	TechIkev2V6,
-	TechOpenvpnUDPV6,
-	TechOpenvpnTCPV6,
+	TechOpenVPNUDPV6,
+	TechOpenVPNTCPV6,
 	TechWireguardUDP,
-	TechOpenvpnUDPTLSCrypt,
-	TechOpenvpnTCPTLSCrypt,
+	TechOpenVPNUDPTLSCrypt,
+	TechOpenVPNTCPTLSCrypt,
 }
 
 // GetFilter implements Filter
