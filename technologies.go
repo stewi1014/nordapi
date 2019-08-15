@@ -30,9 +30,9 @@ type Technology struct {
 
 // NordVPN server feature IDs
 var (
-	TechIkev2              = &Technology{ID: 1, Name: "IKEv2/IPSec", Identifier: " ikev2"}                            // Ikev2/IPSec
-	TechOpenvpnUDP         = &Technology{ID: 3, Name: "OpenVPN UDP", Identifier: " openvpn_udp"}                      // OpenVPN UDP
-	TechOpenvpnTCP         = &Technology{ID: 5, Name: "OpenVPN TCP", Identifier: " openvpn_tcp"}                      // OpenVPN TCP
+	TechIkev2              = &Technology{ID: 1, Name: "IKEv2/IPSec", Identifier: "ikev2"}                             // Ikev2/IPSec
+	TechOpenvpnUDP         = &Technology{ID: 3, Name: "OpenVPN UDP", Identifier: "openvpn_udp"}                       // OpenVPN UDP
+	TechOpenvpnTCP         = &Technology{ID: 5, Name: "OpenVPN TCP", Identifier: "openvpn_tcp"}                       // OpenVPN TCP
 	TechSocks              = &Technology{ID: 7, Name: "Socks 5", Identifier: "socks"}                                 // Socks 5 proxy
 	TechProxy              = &Technology{ID: 9, Name: "HTTP Proxy", Identifier: "proxy"}                              // HTTP Proxy
 	TechPptp               = &Technology{ID: 11, Name: "PPTP", Identifier: "pptp"}                                    // Pptp
@@ -45,7 +45,7 @@ var (
 	TechIkev2V6            = &Technology{ID: 26, Name: "IKEv2/IPSec IPv6", Identifier: "ikev2_v6"}                    // IKEv2/IPSec IPv6
 	TechOpenvpnUDPV6       = &Technology{ID: 29, Name: "OpenVPN UDP IPv6", Identifier: "openvpn_udp_v6"}              // OpenVPN UDP IPv6
 	TechOpenvpnTCPV6       = &Technology{ID: 32, Name: "OpenVPN TCP IPv6", Identifier: "openvpn_tcp_v6"}              // OpenVPN TCP IPv6
-	TechWireguardUDP       = &Technology{ID: 35, Name: "Wireguard", Identifier: " wireguard_udp"}                     // Wireguard
+	TechWireguardUDP       = &Technology{ID: 35, Name: "Wireguard", Identifier: "wireguard_udp"}                      // Wireguard
 	TechOpenvpnUDPTLSCrypt = &Technology{ID: 38, Name: "OpenVPN UDP TLS Crypt", Identifier: "openvpn_udp_tls_crypt"}  // OpenVPN UDP TLS Crypt
 	TechOpenvpnTCPTLSCrypt = &Technology{ID: 41, Name: "OpenVPN TCP TLS Crypt", Identifier: "openvpn_tcp_tls_crypt"}  // OpenVPN TCP TLS Crypt
 )
