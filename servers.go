@@ -1,12 +1,31 @@
 package nordapi
 
 import (
-	"errors"
+	"fmt"
 	"strconv"
 )
 
-// ErrServerNotFound is returned if the server cannot be found.
-var ErrServerNotFound = errors.New("Server not found")
+// ErrServerNotFound is returned when no servers are found.
+type ErrServerNotFound struct {
+	Filters []Filter
+	URL     string
+}
+
+// Error implements error
+func (e ErrServerNotFound) Error() string {
+	if len(e.Filters) > 0 {
+		return fmt.Sprintf("server not found, filters: %v", e.Filters)
+	}
+	return "server not found"
+}
+
+// String implements fmt.Stringer
+func (e ErrServerNotFound) String() string {
+	if e.URL == "" {
+		return "error server not found"
+	}
+	return fmt.Sprintf("error no servers found at \"%v\"", e.URL)
+}
 
 // ServerList is a list of NordVPN servers
 type ServerList []*Server
@@ -43,7 +62,7 @@ func Reccomended(n int, filters ...Filter) (ServerList, error) {
 		return nil, err
 	}
 	if len(servers) == 0 {
-		return nil, ErrServerNotFound
+		return nil, ErrServerNotFound{Filters: filters}
 	}
 	return servers, nil
 }
@@ -55,7 +74,7 @@ func (sl ServerList) Hostname(hostname string) (*Server, error) {
 			return sl[i], nil
 		}
 	}
-	return nil, ErrServerNotFound
+	return nil, ErrServerNotFound{}
 }
 
 // Filter filters servers satisfying the given filters.

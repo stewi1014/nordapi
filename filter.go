@@ -1,5 +1,7 @@
 package nordapi
 
+import "fmt"
+
 // Filter is an interface to an object that provides a filter for NordVPN servers.
 type Filter interface {
 	// GetFilter returns the filter. When applying filters, they're added to the url as follows;
@@ -8,6 +10,9 @@ type Filter interface {
 
 	// Satisfies returns true if the given server satisfies the filter.
 	Satisfies(*Server) bool
+
+	// Human readable name
+	fmt.Stringer
 }
 
 // FilterList is a list of filters.

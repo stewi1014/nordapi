@@ -91,7 +91,7 @@ func Hostname(hostname string) (*Server, error) {
 // OpenVPNUDPConfig returns the UDP port 1194 OpenVPN configuration for the server.
 func (s *Server) OpenVPNUDPConfig() (io.ReadCloser, error) {
 	if s.Hostname == "" {
-		return nil, ErrServerNotFound
+		return nil, ErrServerNotFound{}
 	}
 
 	resp, err := client.Get(
@@ -112,7 +112,7 @@ func (s *Server) OpenVPNUDPConfig() (io.ReadCloser, error) {
 // OpenVPNTCPConfig returns the TCP port 443 OpenVPN configuration for the server.
 func (s *Server) OpenVPNTCPConfig() (io.ReadCloser, error) {
 	if s.Hostname == "" {
-		return nil, ErrServerNotFound
+		return nil, ErrServerNotFound{}
 	}
 
 	resp, err := client.Get(
