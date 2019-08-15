@@ -1,6 +1,7 @@
 package nordapi
 
 import (
+	"errors"
 	"io"
 )
 
@@ -101,6 +102,9 @@ func (s *Server) OpenVPNUDPConfig() (io.ReadCloser, error) {
 	if err != nil {
 		return nil, err
 	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
+	}
 
 	return resp.Body, err
 }
@@ -118,6 +122,9 @@ func (s *Server) OpenVPNTCPConfig() (io.ReadCloser, error) {
 
 	if err != nil {
 		return nil, err
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, errors.New(resp.Status)
 	}
 
 	return resp.Body, err
