@@ -83,6 +83,27 @@ AlreadyHave:
 	return found
 }
 
+// Groups returns a list of groups
+func Groups() ([]*Group, error) {
+	var groups []*Group
+	err := getAndUnmarshall("https://api.nordvpn.com/v1/servers/groups", &groups)
+	if err != nil {
+		return nil, err
+	}
+
+AlreadyHave:
+	for i := range groups {
+		for j := range knownGroups {
+			if groups[i].Identifier == knownGroups[j].Identifier {
+				continue AlreadyHave
+			}
+		}
+		knownGroups = append(knownGroups, groups[i])
+	}
+
+	return groups, nil
+}
+
 // GetFilter implements Filter
 func (g *Group) GetFilter() string {
 	return "filters[servers_groups][identifier]=" + g.Identifier
