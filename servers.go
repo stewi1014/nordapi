@@ -57,3 +57,15 @@ func (sl ServerList) Hostname(hostname string) (*Server, error) {
 	}
 	return nil, ErrServerNotFound
 }
+
+// Filter filters servers satisfying the given filters.
+func (sl ServerList) Filter(filters ...Filter) ServerList {
+	fl := FilterList(filters)
+	var nsl ServerList
+	for _, s := range sl {
+		if fl.Satisfies(s) {
+			nsl = append(nsl, s)
+		}
+	}
+	return nsl
+}

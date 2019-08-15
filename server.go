@@ -30,11 +30,11 @@ type Server struct {
 		UpdatedAt  string `json:"updated_at"`
 	} `json:"services"`
 	Technologies []struct {
-		ID         Technology `json:"id"`
-		Name       string     `json:"name"`
-		Identifier string     `json:"identifier"`
-		CreatedAt  string     `json:"created_at"`
-		UpdatedAt  string     `json:"updated_at"`
+		ID         int    `json:"id"`
+		Name       string `json:"name"`
+		Identifier string `json:"identifier"`
+		CreatedAt  string `json:"created_at"`
+		UpdatedAt  string `json:"updated_at"`
 		Pivot      struct {
 			TechnologyID int    `json:"technology_id"`
 			ServerID     int    `json:"server_id"`
@@ -42,7 +42,7 @@ type Server struct {
 		} `json:"pivot"`
 	} `json:"technologies"`
 	Groups []struct {
-		ID        Group  `json:"id"`
+		ID        int    `json:"id"`
 		CreatedAt string `json:"created_at"`
 		UpdatedAt string `json:"updated_at"`
 		Title     string `json:"title"`
@@ -87,8 +87,8 @@ func Hostname(hostname string) (*Server, error) {
 	return servers.Hostname(hostname)
 }
 
-// OpenvpnUDPConfig returns the UDP port 1194 OpenVPN configuration for the server.
-func (s *Server) OpenvpnUDPConfig() (io.ReadCloser, error) {
+// OpenVPNUDPConfig returns the UDP port 1194 OpenVPN configuration for the server.
+func (s *Server) OpenVPNUDPConfig() (io.ReadCloser, error) {
 	if s.Hostname == "" {
 		return nil, ErrServerNotFound
 	}
@@ -105,8 +105,8 @@ func (s *Server) OpenvpnUDPConfig() (io.ReadCloser, error) {
 	return resp.Body, err
 }
 
-// OpenvpnTCPConfig returns the TCP port 443 OpenVPN configuration for the server.
-func (s *Server) OpenvpnTCPConfig() (io.ReadCloser, error) {
+// OpenVPNTCPConfig returns the TCP port 443 OpenVPN configuration for the server.
+func (s *Server) OpenVPNTCPConfig() (io.ReadCloser, error) {
 	if s.Hostname == "" {
 		return nil, ErrServerNotFound
 	}
