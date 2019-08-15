@@ -4,7 +4,6 @@ package nordapi
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -22,7 +21,7 @@ func getAndUnmarshall(url string, obj interface{}) error {
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return errors.New(resp.Status)
+		return fmt.Errorf("getting \"%v\"; %v", url, resp.Status)
 	}
 
 	dec := json.NewDecoder(resp.Body)
