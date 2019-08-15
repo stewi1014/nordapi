@@ -42,3 +42,14 @@ func (f FilterList) Satisfies(s *Server) bool {
 	}
 	return true
 }
+
+// String implements fmt.Stringer
+func (f FilterList) String() (str string) {
+	for i := range f {
+		if i > 0 {
+			str += " "
+		}
+		str += f[i].String()
+	}
+	return
+}

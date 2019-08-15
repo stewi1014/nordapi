@@ -34,6 +34,7 @@ func (c CountryID) Satisfies(s *Server) bool {
 	return c == s.Locations[0].Country.ID
 }
 
+// String implements fmt.Stringer
 func (c CountryID) String() string {
 	return "country_id=" + strconv.Itoa(int(c))
 }
