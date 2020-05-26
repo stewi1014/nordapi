@@ -9,25 +9,6 @@ type Technology struct {
 	Identifier string `json:"identifier"`
 }
 
-// Ikev2/IPSec
-// OpenVPN UDP
-// OpenVPN TCP
-// Socks 5 proxy
-// HTTP Proxy
-// Pptp
-// L2TP/IPSec
-// OpenVPN UDP Obfuscated
-// OpenVPN TCP Obfuscated
-// HTTP CyberSec Proxy
-// HTTP Proxy (SSL)
-// HTTP CyberSec Proxy (SSL)
-// IKEv2/IPSec IPv6
-// OpenVPN UDP IPv6
-// OpenVPN TCP IPv6
-// Wireguard
-// OpenVPN UDP TLS Crypt
-// OpenVPN TCP TLS Crypt
-
 // NordVPN server feature IDs
 var (
 	TechIkev2              = &Technology{ID: 1, Name: "IKEv2/IPSec", Identifier: "ikev2"}                             // Ikev2/IPSec
